@@ -298,7 +298,6 @@ footer { text-align: center; padding-top: 18px; color: var(--muted); font-size: 
 .modal-card h2 { margin: 5px 0 8px; font-size: 2rem; }
 .modal-card p { color: var(--muted); line-height: 1.55; }
 .modal-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
-.solution-box { margin-top: 14px; text-align: left; background: #f4f7fa; border-radius: 14px; padding: 12px 14px; line-height: 1.65; font-size: .9rem; }
 
 .confetti-layer { position: fixed; inset: 0; z-index: 60; pointer-events: none; overflow: hidden; }
 .confetti-piece { position: absolute; top: -18px; width: 10px; height: 18px; border-radius: 2px; animation: fall 2.6s linear forwards; }

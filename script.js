@@ -14,13 +14,11 @@ const characters = {
   sheep:  { name: "Ovelha", short: "O", emoji: "🐑", role: "precisa de proteção" }
 };
 
-const MINIMUM_MOVES = 7;
 
 let state = createInitialState();
 let selectedPassenger = null;
 let moves = 0;
 let history = [];
-let hintIndex = 0;
 let soundOn = true;
 let locked = false;
 
@@ -31,7 +29,6 @@ const els = {
   boatPassengers: document.querySelector("#boatPassengers"),
   crossBtn: document.querySelector("#crossBtn"),
   undoBtn: document.querySelector("#undoBtn"),
-  hintBtn: document.querySelector("#hintBtn"),
   resetBtn: document.querySelector("#resetBtn"),
   soundBtn: document.querySelector("#soundBtn"),
   moves: document.querySelector("#moves"),
@@ -49,9 +46,7 @@ const els = {
   modalEmoji: document.querySelector("#modalEmoji"),
   modalTitle: document.querySelector("#modalTitle"),
   modalText: document.querySelector("#modalText"),
-  solutionBox: document.querySelector("#solutionBox"),
   modalPrimary: document.querySelector("#modalPrimary"),
-  modalSecondary: document.querySelector("#modalSecondary"),
   confetti: document.querySelector("#confetti")
 };
 
@@ -217,7 +212,6 @@ function undoMove() {
   state = cloneState(previous.state);
   moves = previous.moves;
   selectedPassenger = null;
-  hintIndex = Math.max(0, hintIndex - 1);
   showMessage("↶", "Última travessia desfeita. Tente uma estratégia diferente.", "");
   playTone(280, 0.07);
   render();
@@ -228,26 +222,10 @@ function resetGame() {
   selectedPassenger = null;
   moves = 0;
   history = [];
-  hintIndex = 0;
   locked = false;
   closeModal();
   showMessage("🎯", "Clique em um animal que esteja na mesma margem do pastor para colocá-lo no barco.", "");
   render();
-}
-
-const hints = [
-  "Observe qual personagem entra em conflito com dois outros. Esse é o elemento mais importante da estratégia.",
-  "O lobo não pode ficar sem o pastor nem com a ovelha nem com o cão pastor.",
-  "Experimente fazer a primeira travessia levando o lobo.",
-  "Em algum momento, um animal que já atravessou precisará voltar no barco.",
-  "Uma sequência possível começa assim: lobo vai → pastor volta sozinho → cão pastor vai..."
-];
-
-function showHint() {
-  const text = hints[Math.min(hintIndex, hints.length - 1)];
-  hintIndex += 1;
-  showMessage("💡", text, "warning");
-  playTone(620, 0.08);
 }
 
 function showMessage(icon, text, type = "") {
@@ -261,45 +239,21 @@ function openLoseModal(danger) {
   els.modalEmoji.textContent = "🚨";
   els.modalTitle.textContent = "Essa travessia não é segura";
   els.modalText.textContent = `${danger.title} ${danger.message}`;
-  els.solutionBox.classList.add("hidden");
   els.modalPrimary.textContent = "Tentar novamente";
-  els.modalSecondary.textContent = "Ver solução";
-  els.modalSecondary.classList.remove("hidden");
   els.modal.classList.remove("hidden");
 }
 
 function openWinModal() {
   locked = true;
-  const perfect = moves === MINIMUM_MOVES;
-  els.modalEmoji.textContent = perfect ? "🏆" : "🎉";
-  els.modalTitle.textContent = perfect ? "Solução mínima!" : "Travessia concluída!";
-  els.modalText.textContent = perfect
-    ? `Excelente: você resolveu em ${moves} travessias, que é o mínimo desta versão.`
-    : `Você resolveu em ${moves} travessias. Agora tente chegar à solução mínima de ${MINIMUM_MOVES}.`;
-  els.solutionBox.classList.add("hidden");
+  els.modalEmoji.textContent = "🏆";
+  els.modalTitle.textContent = "Travessia concluída!";
+  els.modalText.textContent = `Parabéns! Você conseguiu levar todos para a outra margem em ${moves} travessias.`;
   els.modalPrimary.textContent = "Jogar novamente";
-  els.modalSecondary.textContent = "Ver solução mínima";
-  els.modalSecondary.classList.remove("hidden");
   els.modal.classList.remove("hidden");
-}
-
-function showSolution() {
-  els.solutionBox.innerHTML = `
-    <strong>Solução em ${MINIMUM_MOVES} travessias:</strong><br>
-    1. Leve o <b>lobo</b> →<br>
-    2. Pastor volta <b>sozinho</b> ←<br>
-    3. Leve o <b>cão pastor</b> →<br>
-    4. Traga o <b>lobo</b> de volta ←<br>
-    5. Leve a <b>ovelha</b> →<br>
-    6. Pastor volta <b>sozinho</b> ←<br>
-    7. Leve o <b>lobo</b> →
-  `;
-  els.solutionBox.classList.remove("hidden");
 }
 
 function closeModal() {
   els.modal.classList.add("hidden");
-  els.solutionBox.classList.add("hidden");
 }
 
 function saveBestScore() {
@@ -377,13 +331,11 @@ function sleep(ms) {
 // Eventos principais
 els.crossBtn.addEventListener("click", crossRiver);
 els.undoBtn.addEventListener("click", undoMove);
-els.hintBtn.addEventListener("click", showHint);
 els.resetBtn.addEventListener("click", resetGame);
 els.soundBtn.addEventListener("click", toggleSound);
 els.rulesToggle.addEventListener("click", toggleRules);
 els.teacherToggle.addEventListener("click", toggleTeacherPanel);
 els.modalPrimary.addEventListener("click", resetGame);
-els.modalSecondary.addEventListener("click", showSolution);
 
 // Atalhos de teclado úteis em sala:
 // 1 = cão, 2 = lobo, 3 = ovelha, Enter = atravessar, Z = desfazer.
