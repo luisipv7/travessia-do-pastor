@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Jogo educativo de lógica: ajude o pastor, o cão pastor, o lobo e a ovelha a atravessar o rio com segurança." />
+  <title>Travessia do Pastor — Desafio de Lógica</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">DESAFIO DE LÓGICA • INFORMÁTICA</p>
+        <h1>Travessia do Pastor</h1>
+        <p class="subtitle">Leve todos para a margem direita sem deixar uma combinação perigosa para trás.</p>
+      </div>
+      <button id="soundBtn" class="icon-btn" type="button" aria-label="Ativar ou desativar sons" title="Som">🔊</button>
+    </header>
+
+    <section class="stats" aria-label="Informações da partida">
+      <div class="stat-card"><span>Travessias</span><strong id="moves">0</strong></div>
+      <div class="stat-card"><span>Recorde</span><strong id="best">—</strong></div>
+      <div class="stat-card"><span>Meta</span><strong>7</strong></div>
+      <div class="stat-card wide"><span>Status</span><strong id="status">Escolha um passageiro ou atravesse sozinho.</strong></div>
+    </section>
+
+    <section class="rules-panel" aria-labelledby="rulesTitle">
+      <div class="rules-heading">
+        <div>
+          <p class="eyebrow">MISSÃO</p>
+          <h2 id="rulesTitle">Regras da travessia</h2>
+        </div>
+        <button id="rulesToggle" class="secondary-btn" type="button" aria-expanded="true">Ocultar regras</button>
+      </div>
+      <div id="rulesContent" class="rules-grid">
+        <article>🚣 <b>Barco:</b> o pastor pilota e pode levar no máximo <b>1 animal</b> por viagem.</article>
+        <article>🐺 + 🐑 <b>Perigo:</b> o lobo não pode ficar sozinho com a ovelha sem o pastor.</article>
+        <article>🐕 + 🐺 <b>Perigo:</b> o cão pastor e o lobo não podem ficar sozinhos juntos sem o pastor.</article>
+        <article>↩️ <b>Importante:</b> você pode atravessar sozinho e também trazer um animal de volta.</article>
+      </div>
+    </section>
+
+    <section class="game-board" aria-label="Tabuleiro da travessia">
+      <div class="sky-decoration cloud c1">☁️</div>
+      <div class="sky-decoration cloud c2">☁️</div>
+      <div class="sky-decoration bird b1">⌁</div>
+      <div class="sky-decoration bird b2">⌁</div>
+
+      <div class="bank bank-left" id="leftBank">
+        <h2>Margem inicial</h2>
+        <p>Esquerda</p>
+        <div class="characters" id="leftCharacters" aria-live="polite"></div>
+      </div>
+
+      <div class="river" aria-label="Rio">
+        <div class="river-title">RIO</div>
+        <div class="wave wave-1"></div>
+        <div class="wave wave-2"></div>
+        <div class="wave wave-3"></div>
+
+        <div id="boatTrack" class="boat-track side-left">
+          <div class="boat-wrap">
+            <div class="boat-passengers" id="boatPassengers" aria-live="polite"></div>
+            <div class="boat" aria-hidden="true">
+              <span class="mast">│</span>
+              <span class="flag">▶</span>
+              <span class="hull">🛶</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bank bank-right" id="rightBank">
+        <h2>Destino</h2>
+        <p>Direita</p>
+        <div class="characters" id="rightCharacters" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="controls" aria-label="Controles">
+      <button id="crossBtn" class="primary-btn" type="button">🚣 Atravessar o rio</button>
+      <button id="undoBtn" class="secondary-btn" type="button" disabled>↶ Desfazer</button>
+      <button id="hintBtn" class="secondary-btn" type="button">💡 Dica</button>
+      <button id="resetBtn" class="danger-btn" type="button">⟳ Reiniciar</button>
+    </section>
+
+    <section class="message-panel" id="messagePanel" aria-live="assertive">
+      <span id="messageIcon">🎯</span>
+      <p id="messageText">Clique em um animal que esteja na mesma margem do pastor para colocá-lo no barco.</p>
+    </section>
+
+    <section class="teacher-panel">
+      <div class="teacher-heading">
+        <div>
+          <p class="eyebrow">PARA A AULA DE INFORMÁTICA</p>
+          <h2>Painel de lógica</h2>
+        </div>
+        <button id="teacherToggle" class="secondary-btn" type="button" aria-expanded="false">Abrir painel</button>
+      </div>
+      <div id="teacherContent" class="teacher-content hidden">
+        <div class="logic-card">
+          <h3>Estado atual</h3>
+          <code id="stateCode">P=E | C=E | L=E | O=E</code>
+          <p>E = esquerda, D = direita. Cada travessia muda o estado do pastor e, se houver, do passageiro.</p>
+        </div>
+        <div class="logic-card">
+          <h3>Condições inválidas</h3>
+          <code>(L == O && P != L) || (C == L && P != C)</code>
+          <p>Este teste é executado após cada movimento. Se for verdadeiro, a partida entra em estado de derrota.</p>
+        </div>
+        <div class="logic-card">
+          <h3>Conceitos trabalhados</h3>
+          <p>Eventos, DOM, condicionais, objetos, arrays, funções, máquina de estados, validação de regras e algoritmo de busca.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Projeto educativo • HTML + CSS + JavaScript puro • Funciona offline</p>
+    </footer>
+  </main>
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <div id="modalEmoji" class="modal-emoji">🏆</div>
+      <h2 id="modalTitle">Parabéns!</h2>
+      <p id="modalText"></p>
+      <div id="solutionBox" class="solution-box hidden"></div>
+      <div class="modal-actions">
+        <button id="modalPrimary" class="primary-btn" type="button">Jogar novamente</button>
+        <button id="modalSecondary" class="secondary-btn hidden" type="button">Ver solução</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="confetti" class="confetti-layer" aria-hidden="true"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
